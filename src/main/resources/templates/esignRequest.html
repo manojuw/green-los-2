@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LOS</title>
+
+  <!--favicon-->
+  <link rel="icon" href="assets/images/favicon-32x32.png" type="image/png">
+
+  <!-- loader -->
+  <link href="assets/css/pace.min.css" rel="stylesheet">
+  <script src="assets/js/pace.min.js"></script>
+  <script src="assets/js/leegalityv7.js"></script>
+
+  <!--plugins-->
+  <link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/metismenu/metisMenu.min.css">
+  <link rel="stylesheet" type="text/css" href="assets/plugins/metismenu/mm-vertical.css">
+
+  <!--bootstrap css-->
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+
+  <!--main css-->
+  <link href="assets/css/bootstrap-extended.css" rel="stylesheet">
+  <link href="sass/main.css" rel="stylesheet">
+  <link href="sass/dark-theme.css" rel="stylesheet">
+  <link href="sass/blue-theme.css" rel="stylesheet">
+  <link href="sass/responsive.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="mx-3 mx-lg-0">
+    <div class="card my-5 col-xl-6 col-xxl-6 mx-auto rounded-4 overflow-hidden p-4">
+      <div class="col-lg-12 d-flex">
+        <div class="card-body text-center">
+          <img src="./assets/images/logo1.png" class="mb-4" width="145" alt="">
+          <h4 class="fw-bold">Esign Request</h4>
+
+          <!-- ✅ Show success/failure message from server -->
+          <div th:if="${message}" class="alert alert-success" role="alert">
+            <p th:text="${message}"></p>
+          </div>
+
+          <!-- ✅ Hidden form to redirect after backend processing -->
+          <form id="esignForm" th:if="${esign}" th:action="@{${esign.eSignRedirectUrl}}" method="get">
+            <input type="hidden" name="esignStatus" th:value="${esign.eSignStatus}">
+          </form>
+
+          <!-- ✅ Show button only if no message yet -->
+          <div class="col-12" th:if="${message == null}">
+            <input type="hidden" id="userId" th:value="${user.digioId}">
+            <input type="hidden" id="url" th:value="${user.digioId}">
+            <input type="hidden" id="access" th:value="${user.accessToken}">
+            <input type="hidden" id="mobile" th:value="${user.mobileNumber}">
+            <input type="hidden" id="webhooks" th:value="${webhooks}">
+
+            <div class="d-grid">
+              <a href="javascript:void(0);" onclick="sign()" class="btn btn-grd btn-grd-primary px-5">
+                Sign Now
+              </a>
+            </div>
+
+            <p id="message" style="margin-top: 10px;"></p>
+
+            <script>
+              // Global variables
+              var urls = document.getElementById("url").value;
+              var access = document.getElementById("access").value;
+              var webhook = document.getElementById("webhooks").value;
+              const myCallbackUrl = webhook;
+
+              /**
+               * Dynamically creates a hidden form and submits data to backend
+               */
+              function sendCallbackForm(signingUrl, status, message) {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = myCallbackUrl;
+
+                // Add hidden inputs
+                const fields = { signingUrl, status, message };
+                for (const key in fields) {
+                  const input = document.createElement("input");
+                  input.type = "hidden";
+                  input.name = key;
+                  input.value = fields[key];
+                  form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+              }
+
+              /**
+               * Callback from Leegality SDK
+               */
+              function callback(response) {
+                let signingUrl = access;
+
+                if (response.error) {
+                  document.getElementById('message').style.color = "red";
+                  document.getElementById('message').innerHTML = response.error;
+
+                  // ✅ Send failure as form POST
+                  sendCallbackForm(signingUrl, "FAILED", response.error);
+
+                } else {
+                  document.getElementById('message').style.color = "green";
+                  document.getElementById('message').innerHTML = response.message;
+
+                  // ✅ Send success as form POST
+                  sendCallbackForm(signingUrl, "SUCCESS", response.message);
+                }
+              }
+
+              var obj = {
+                logoUrl: "https://mufingreenfinance.com/wp-content/uploads/2022/08/Mufin-Green-Logo-For-Website-01-01-01-1.png",
+                callback: callback
+              };
+
+              /**
+               * Initiates eSign process
+               */
+              function sign() {
+                console.log("Signing URL:", urls);
+                if (!urls) {
+                  alert("No signing URL found! Please check backend response.");
+                  return;
+                }
+
+                var leegality = new Leegality(obj);
+                leegality.init();
+                leegality.esign(urls); // Open popup
+              }
+            </script>
+          </div>
+
+          <!-- ✅ Auto-redirect after success (when esign object is present) -->
+          <script th:if="${esign != null}">
+            setTimeout(() => {
+              const redirectUrl = document.querySelector("#esignForm")?.getAttribute("action");
+              if (redirectUrl) {
+                window.location.href = redirectUrl;
+              }
+            }, 1500);
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="response"></div>
+
+  <!--plugins-->
+  <script src="assets/js/jquery.min.js"></script>
+</body>
+</html>

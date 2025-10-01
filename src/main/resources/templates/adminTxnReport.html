@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">Report</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Download Borrower</li>
+							</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="card">
+						<div class="card-body p-4">
+							<!-- Message Section -->
+							<div th:if="${message}" class="alert alert-success" role="alert">
+								<p th:text="${message}"></p>
+							</div>
+
+							<form id="transactionSearchForm" class="row g-3">
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">From Date</label>
+									<div class="col-sm-9">
+										<input type="date" class="form-control" id="fromDate" name="fromDate" required>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">To Date</label>
+									<div class="col-sm-9">
+										<input type="date" class="form-control" id="toDate" name="toDate" required>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="button" id="searchButton"
+												class="btn btn-grd btn-grd-primary px-5">Download</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div><!-- end row -->
+
+
+		</div>
+	</main>
+</body>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		$('#searchButton').on('click', function (e) {
+			e.preventDefault(); // Prevent the form from submitting the traditional way
+
+			var fromDate = $('#fromDate').val();
+			var toDate = $('#toDate').val();
+
+			$.ajax({
+				url: '/adminTxnDownload', // URL to send the request to
+				type: 'GET', // The HTTP method to use for the request
+				data: {
+					fromDate: fromDate,
+					toDate: toDate
+				},
+				success: function (data, status, xhr) {
+					// Create a link to download the CSV file from the server response
+					var a = document.createElement('a');
+					a.href = window.URL.createObjectURL(new Blob([data], {type: 'text/csv'}));
+					a.download = 'borrower_' + new Date().toISOString().slice(0, 10) + '.csv';
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+				},
+				error: function (xhr, status, error) {
+					// Handle error scenario
+					alert('Error: ' + error);
+				}
+			});
+		});
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			paging: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</html>

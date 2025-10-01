@@ -1,0 +1,161 @@
+<!--start sidebar-->
+<aside class="sidebar-wrapper" data-simplebar="true">
+	<div class="sidebar-header">
+		<div class="logo-icon">
+			<img src="assets/images/logo-icon.png" class="logo-img" alt="">
+		</div>
+		<div class="logo-name flex-grow-1">
+			<h5 class="mb-0">LOS</h5>
+		</div>
+		<div class="sidebar-close">
+			<span class="material-icons-outlined">close</span>
+		</div>
+	</div>
+	<div class="sidebar-nav">
+		<!--navigation-->
+		<ul class="metismenu" id="sidenav">
+			<li>
+				<a href="dashboard">
+					<div class="parent-icon"><i class="material-icons-outlined">home</i>
+					</div>
+					<div class="menu-title">Dashboard</div>
+				</a>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('PERMISSION_USER_VIEW')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">account_circle</i>
+					</div>
+					<div class="menu-title">User</div>
+				</a>
+				<ul>
+					<li><a href="/user"><i class="material-icons-outlined">arrow_right</i>Add SubAdmin</a>
+					</li>
+					<li><a href="/userList"><i class="material-icons-outlined">arrow_right</i>User List</a>
+					</li>
+				</ul>
+			</li>
+
+			<li th:if="${@securityUtils.hasAuthority('PERMISSION_PERMISSION_VIEW')}">
+				<a href="permission">
+					<div class="parent-icon"><i class="material-icons-outlined">apps</i>
+					</div>
+					<div class="menu-title">Permission</div>
+				</a>
+
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('PERMISSION_ROLE_VIEW')}">
+				<a href="role">
+					<div class="parent-icon"><i class="material-icons-outlined">apps</i>
+					</div>
+					<div class="menu-title">Role</div>
+				</a>
+
+			</li>
+
+			<li th:if="${@securityUtils.hasAuthority('ONBOARDING_LSP') or @securityUtils.hasAuthority('VIEW_LSP')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">account_circle</i></div>
+					<div class="menu-title">LSP</div>
+				</a>
+				<ul>
+					<li th:if="${@securityUtils.hasAuthority('ONBOARDING_LSP')}">
+						<a href="/lsp"><i class="material-icons-outlined">arrow_right</i>Add LSP</a>
+					</li>
+					<li th:if="${@securityUtils.hasAuthority('VIEW_LSP')}">
+						<a href="/lspList"><i class="material-icons-outlined">arrow_right</i>LSP List</a>
+					</li>
+				</ul>
+			</li>
+
+			<li th:if="${@securityUtils.hasAuthority('ONBOARDING_NBFC') or @securityUtils.hasAuthority('VIEW_NBFC')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">account_circle</i></div>
+					<div class="menu-title">Organisation</div>
+				</a>
+				<ul>
+					<li th:if="${@securityUtils.hasAuthority('ONBOARDING_NBFC')}">
+						<a href="/organisation"><i class="material-icons-outlined">arrow_right</i>Add Organisation</a>
+					</li>
+					<li th:if="${@securityUtils.hasAuthority('VIEW_NBFC')}">
+						<a href="/organisationList"><i class="material-icons-outlined">arrow_right</i>Organisation
+							List</a>
+					</li>
+				</ul>
+			</li>
+
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">inventory_2</i></div>
+					<div class="menu-title">Product</div>
+				</a>
+				<ul>
+					<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT')}">
+						<a href="/product"><i class="material-icons-outlined">arrow_right</i>Add Product</a>
+					</li>
+					<li th:if="${@securityUtils.hasAuthority('EDIT_PRODUCT')}">
+						<a href="/productList"><i class="material-icons-outlined">arrow_right</i>Product List</a>
+					</li>
+				</ul>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">api</i></div>
+					<div class="menu-title">Key</div>
+				</a>
+				<ul>
+					<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT')}">
+						<a href="/key"><i class="material-icons-outlined">arrow_right</i>Key</a>
+					</li>
+
+				</ul>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="ruleEngine">
+					<div class="parent-icon"><i class="material-icons-outlined">report_problem</i>
+					</div>
+					<div class="menu-title">Rule Engine</div>
+				</a>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="journeyEngine">
+					<div class="parent-icon"><i class="material-icons-outlined">join_right</i>
+					</div>
+					<div class="menu-title">Journey Engine</div>
+				</a>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="javascript:;" class="has-arrow">
+					<div class="parent-icon"><i class="material-icons-outlined">fitbit</i></div>
+					<div class="menu-title">Report</div>
+				</a>
+				<ul>
+					<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT')}">
+						<a href="/borrowerReport"><i class="material-icons-outlined">arrow_right</i>Business Report</a>
+					</li>
+					<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT')}">
+						<a href="/adminBorrowerReport"><i class="material-icons-outlined">arrow_right</i>Download
+							Business
+							Report</a>
+					</li>
+					<li th:if="${@securityUtils.hasAuthority('EDIT_PRODUCT')}">
+						<a href="/customerReport"><i class="material-icons-outlined">arrow_right</i>Customer Report</a>
+					</li>
+				</ul>
+			</li>
+			<li th:if="${@securityUtils.hasAuthority('ADD_PRODUCT') or @securityUtils.hasAuthority('EDIT_PRODUCT')}">
+				<a href="getEmiBreakUp">
+					<div class="parent-icon"><i class="material-icons-outlined">description</i>
+					</div>
+					<div class="menu-title">EMI Breakup</div>
+				</a>
+			</li>
+
+
+
+		</ul>
+		<!--end navigation-->
+	</div>
+
+
+</aside>
+<!--end sidebar-->

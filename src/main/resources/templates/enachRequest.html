@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>LOS</title>
+	<!--favicon-->
+	<link rel="icon" href="assets/images/favicon-32x32.png" type="image/png">
+	<!-- loader-->
+	<link href="assets/css/pace.min.css" rel="stylesheet">
+	<script src="assets/js/pace.min.js"></script>
+	<script type="text/javascript" src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+	<!--plugins-->
+	<link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="assets/plugins/metismenu/metisMenu.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/plugins/metismenu/mm-vertical.css">
+	<!--bootstrap css-->
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+	<!--main css-->
+	<link href="assets/css/bootstrap-extended.css" rel="stylesheet">
+	<link href="sass/main.css" rel="stylesheet">
+	<link href="sass/dark-theme.css" rel="stylesheet">
+	<link href="sass/blue-theme.css" rel="stylesheet">
+	<link href="sass/responsive.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+	<!--authentication-->
+
+	<div class="mx-3 mx-lg-0">
+
+		<div class="card my-5 col-xl-6 col-xxl-6 mx-auto rounded-4 overflow-hidden p-4">
+			<div class="col-lg-12 d-flex">
+
+
+				<div class="card-body" style="
+    text-align: center;
+">
+					<img src="./assets/images/logo1.png" class="mb-4" width="145" alt="">
+					<h4 class="fw-bold">Enach Request</h4>
+
+					<div th:if="${message}" class="alert alert-success" role="alert">
+						<p th:text="${message}"></p>
+					</div>
+					<div th:if="${esign}">
+						<form id="esignForm" th:action="@{${esign.nachReturnUrl}}" method="get">
+							<input type="hidden" name="nachStatus" th:value="${esign.nachStatus}">
+						</form>
+						<script th:inline="javascript">
+						/*<![CDATA[*/
+						window.onload = function () {
+							document.getElementById("esignForm").submit();
+						};
+    /*]]>*/
+					</script>
+					</div>
+
+					
+
+					<div class="col-12" th:if="${message == null}">
+
+						<input type="hidden" id="subsSessionId" th:value="${user.subscriptionSessionId}">
+						<p class="alert" id="paymentMessage">
+
+						</p>
+						<div class="d-grid">
+							<button id="subsCheckout" class="btn btn-grd btn-grd-primary px-5">Create
+								Now</button>
+						</div>
+
+						<script>
+							const paymentMessage = document.getElementById("paymentMessage");
+
+							const cashfree = Cashfree({
+								mode: "sandbox"
+							});
+
+							document.getElementById("subsCheckout").addEventListener("click", function () {
+								paymentMessage.innerText = "";
+								paymentMessage.classList.remove("alert-danger");
+								paymentMessage.classList.remove("alert-success");
+
+								cashfree.subscriptionsCheckout({
+									subsSessionId: document.getElementById("subsSessionId").value,
+									//redirectTarget: "_blank"
+								}).then(function (result) {
+									if (result.error) {
+										document.getElementById("paymentMessage").innerHTML = (result.error.message)
+									}
+								})
+							})
+						</script>
+					</div>
+
+
+				</div>
+			</div>
+
+
+		</div><!--end row-->
+	</div>
+
+	</div>
+
+
+	<div id="response"></div>
+
+
+	<!--authentication-->
+
+
+
+
+	<!--plugins-->
+	<script src="assets/js/jquery.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+			$("#show_hide_password a").on('click', function (event) {
+				event.preventDefault();
+				if ($('#show_hide_password input').attr("type") == "text") {
+					$('#show_hide_password input').attr('type', 'password');
+					$('#show_hide_password i').addClass("bi-eye-slash-fill");
+					$('#show_hide_password i').removeClass("bi-eye-fill");
+				} else if ($('#show_hide_password input').attr("type") == "password") {
+					$('#show_hide_password input').attr('type', 'text');
+					$('#show_hide_password i').removeClass("bi-eye-slash-fill");
+					$('#show_hide_password i').addClass("bi-eye-fill");
+				}
+			});
+		});
+	</script>
+
+</body>
+
+</html>

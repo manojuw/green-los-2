@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function () {
+		// Listen for changes in the Partner Name dropdown
+		$('#partnerSelect').on('change', function () {
+			const partnerUid = $(this).val(); // Get selected value
+
+			if (partnerUid) {
+				// Make an AJAX call to fetch products
+				$.ajax({
+					url: '/getProducts', // Replace with your endpoint
+					method: 'GET',
+					data: {uid: partnerUid},
+					success: function (response) {
+						// Clear the existing Product ID options
+						$('#productSelect').empty().append('<option selected disabled value="">Select</option>');
+
+						// Populate the Product ID dropdown with new options
+						response.forEach(product => {
+							$('#productSelect').append(`<option value="${product.productId}">${product.productId} - ${product.productType}</option>`);
+						});
+
+						// Show the Product ID container
+						$('#keyValueContainer').show();
+					},
+					error: function () {
+						alert('Failed to fetch products. Please try again.');
+					}
+				});
+			} else {
+				// Hide the Product ID container if no Partner is selected
+				$('#keyValueContainer').hide();
+			}
+		});
+	});
+</script>
+
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">Journey Engine</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add Journey</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="card">
+						<div class="card-body p-4">
+							<!-- Message Section -->
+							<div th:if="${message}" class="alert alert-success" role="alert">
+								<p th:text="${message}"></p>
+							</div>
+
+							<form class="row g-3" th:action="@{/checkjourneyEngine}" method="post">
+								<h5 class="mb-4">Journey Form</h5>
+
+								<!-- Partner Name Dropdown -->
+								<div class="row mb-3">
+									<label for="partnerSelect" class="col-sm-3 col-form-label">Partner Name</label>
+									<div class="col-sm-9">
+										<select class="form-select" id="partnerSelect" name="uid" required>
+											<option disabled value="" selected>Select</option>
+											<th:block th:each="bankUserDto : ${nbfcList}">
+												<option th:value="${bankUserDto.uid}"
+													th:text="${bankUserDto.coLenderName}"></option>
+											</th:block>
+										</select>
+									</div>
+								</div>
+
+								<!-- Product ID Dropdown -->
+								<div class="row mb-3" id="keyValueContainer" style="display: none;">
+									<label for="productSelect" class="col-sm-3 col-form-label">Product ID</label>
+									<div class="col-sm-9">
+										<select class="form-select" id="productSelect" name="productId" required>
+											<option selected disabled value="">Select</option>
+											<!-- Options will be dynamically populated -->
+										</select>
+									</div>
+								</div>
+
+								<!-- Search Button -->
+								<div class="row">
+									<label class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="submit"
+												class="btn btn-grd btn-grd-primary px-5">Search</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+
+						</div>
+					</div>
+				</div>
+			</div><!-- end row -->
+			<div th:if="${message}" class="card card-body p-4" role="alert">
+				<p th:text="${message}"></p>
+
+				<form class="row g-3" th:action="@{/saveJourneyEngine}" method="post">
+
+					<input type="hidden" name="uid" required th:value="${configureDto.uid}" class="form-control">
+					<input type="hidden" name="productId" required th:value="${configureDto.productId}"
+						class="form-control">
+
+					<div class="input-group mb-3"> <span class="input-group-text">pan</span>
+						<input type="text" name="pan" required
+							th:value="${journeyEngine != null ? journeyEngine.pan : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">aadhaar</span>
+						<input type="text" name="aadhaar" required
+							th:value="${journeyEngine != null ? journeyEngine.aadhaar : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">aadhaarOtp</span>
+						<input type="text" name="aadhaarOtp" required
+							th:value="${journeyEngine != null ? journeyEngine.aadhaarOtp : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">penny</span>
+						<input type="text" name="penny" required
+							th:value="${journeyEngine != null ? journeyEngine.penny : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">cibil</span>
+						<input type="text" name="cibil" required
+							th:value="${journeyEngine != null ? journeyEngine.cibil : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">userImage</span>
+						<input type="text" name="userImage" required
+							th:value="${journeyEngine != null ? journeyEngine.userImage : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">bankStatement</span>
+						<input type="text" name="bankStatement"
+							th:value="${journeyEngine != null ? journeyEngine.bankStatement : ''}" class="form-control">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">processLoan</span>
+						<input type="text" required name="processLoan"
+							th:value="${journeyEngine != null ? journeyEngine.processLoan : ''}" class="form-control">
+					</div>
+
+					<div class="input-group mb-3"> <span class="input-group-text">panImage</span>
+						<input type="text" name="panImage" class="form-control"
+							th:value="${journeyEngine != null ? journeyEngine.panImage : ''}">
+					</div>
+					<div class="input-group mb-3"> <span class="input-group-text">aadhaarImage</span>
+						<input type="text" name="aadhaarImage" class="form-control"
+							th:value="${journeyEngine != null ? journeyEngine.aadhaarImage : ''}">
+					</div>
+
+					<!-- Search Button -->
+					<div class="row">
+						<label class="col-sm-3 col-form-label"></label>
+						<div class="col-sm-9">
+							<div class="d-md-flex d-grid align-items-center gap-3">
+								<button type="submit" class="btn btn-grd btn-grd-primary px-5">SET</button>
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</form>
+
+			</div>
+
+
+
+		</div>
+	</main>
+</body>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</html>

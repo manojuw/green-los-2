@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function () {
+		// Listen for changes in the Partner Name dropdown
+		$('#partnerSelect').on('change', function () {
+			const partnerUid = $(this).val(); // Get selected value
+
+			if (partnerUid) {
+				// Make an AJAX call to fetch products
+				$.ajax({
+					url: '/getProducts', // Replace with your endpoint
+					method: 'GET',
+					data: {uid: partnerUid},
+					success: function (response) {
+						// Clear the existing Product ID options
+						$('#productSelect').empty().append('<option selected disabled value="">Select</option>');
+
+						// Populate the Product ID dropdown with new options
+						response.forEach(product => {
+							$('#productSelect').append(`<option value="${product.productId}">${product.productId} - ${product.productType}</option>`);
+						});
+
+						// Show the Product ID container
+						$('#keyValueContainer').show();
+					},
+					error: function () {
+						alert('Failed to fetch products. Please try again.');
+					}
+				});
+			} else {
+				// Hide the Product ID container if no Partner is selected
+				$('#keyValueContainer').hide();
+			}
+		});
+	});
+</script>
+
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">Rule Engine</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add Rule</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="card">
+						<div class="card-body p-4">
+							<!-- Message Section -->
+							<div th:if="${message}" class="alert alert-success" role="alert">
+								<p th:text="${message}"></p>
+							</div>
+
+							<form class="row g-3" th:action="@{/checkRule}" method="post">
+								<h5 class="mb-4">Rule Form</h5>
+
+								<!-- Partner Name Dropdown -->
+								<div class="row mb-3">
+									<label for="partnerSelect" class="col-sm-3 col-form-label">Partner Name</label>
+									<div class="col-sm-9">
+										<select class="form-select" id="partnerSelect" name="uid" required>
+											<option disabled value="" selected>Select</option>
+											<th:block th:each="bankUserDto : ${nbfcList}">
+												<option th:value="${bankUserDto.uid}"
+													th:text="${bankUserDto.coLenderName}"></option>
+											</th:block>
+										</select>
+									</div>
+								</div>
+
+								<!-- Product ID Dropdown -->
+								<div class="row mb-3" id="keyValueContainer" style="display: none;">
+									<label for="productSelect" class="col-sm-3 col-form-label">Product ID</label>
+									<div class="col-sm-9">
+										<select class="form-select" id="productSelect" name="productId" required>
+											<option selected disabled value="">Select</option>
+											<!-- Options will be dynamically populated -->
+										</select>
+									</div>
+								</div>
+
+								<!-- Search Button -->
+								<div class="row">
+									<label class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="submit"
+												class="btn btn-grd btn-grd-primary px-5">Search</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+
+						</div>
+					</div>
+				</div>
+			</div><!-- end row -->
+			<div th:if="${message}" class="card card-body p-4" role="alert">
+				<p th:text="${message}"></p>
+
+				<div class="mb-4">
+					<h5 class="mb-3">RULE TYPE</h5>
+					<form class="row g-3" th:action="@{/addRuleEngine}" method="post">
+						<div class="row g-3">
+							<div class="col-12 col-lg-3">
+								<div class="nav flex-column nav-pills border rounded vertical-pills overflow-hidden"
+									role="tablist">
+									<button class="nav-link px-4 rounded-0 active" data-bs-toggle="pill"
+										data-bs-target="#cibil" type="button" aria-selected="false" role="tab"
+										tabindex="-1"><i class="bi bi-tag-fill me-2"></i>Cibil Score</button>
+									<button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
+										data-bs-target="#60dpd" type="button" aria-selected="false" role="tab"
+										tabindex="-1"><i class="bi bi-box-seam-fill me-2"></i>1st Year DPD</button>
+									<button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
+										data-bs-target="#90dpd" type="button" aria-selected="false" role="tab"
+										tabindex="-1"><i class="bi bi-truck-front-fill me-2"></i>2nd Year DPD</button>
+									<button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
+										data-bs-target="#minage" type="button" aria-selected="false" role="tab"
+										tabindex="-1"><i class="bi bi-globe me-2"></i>Min Age</button>
+									<button class="nav-link px-4 rounded-0" data-bs-toggle="pill"
+										data-bs-target="#maxage" type="button" aria-selected="false" role="tab"
+										tabindex="-1"><i class="bi bi-hdd-rack-fill me-2"></i>Max Age</button>
+								</div>
+							</div>
+							<div class="col-12 col-lg-9">
+								<div class="tab-content">
+
+									<div class="tab-pane fade active show" id="cibil" role="tabpanel">
+										<h6 class="mb-3">Cibil</h6>
+										<div class="row g-3">
+											<input class="form-control" type="hidden" name="uid" th:value="${uid}"
+												placeholder="Enter...">
+											<input class="form-control" type="hidden" name="productId"
+												th:value="${productId}" placeholder="Enter...">
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">STATUS</label>
+												<select class="form-select" id="input40" name="cibilStatus" required>
+													<option selected disabled value="">Select</option>
+
+													<option th:selected="${rule.cibilStatus == 'ACTIVE'}" value="ACTIVE">ACTIVE</option>
+
+													<option th:selected="${rule.cibilStatus == 'INACTIVE'}" value="INACTIVE">IN-ACTIVE</option>
+
+
+												</select>
+											</div>
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">Min Score</label>
+												<input class="form-control" type="text" name="cibilValue"
+													th:value="${rule.cibilValue}" placeholder="Enter..." onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="60dpd" role="tabpanel">
+										<h6 class="mb-3">1st Year DPD</h6>
+										<div class="row g-3">
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">STATUS</label>
+												<select class="form-select" id="input40" name="firstYearDpdStatus"
+													required>
+													<option selected disabled value="">Select</option>
+
+													<option th:selected="${rule.firstYearDpdStatus == 'ACTIVE'}" value="ACTIVE">ACTIVE</option>
+
+													<option th:selected="${rule.firstYearDpdStatus == 'INACTIVE'}" value="INACTIVE">IN-ACTIVE</option>
+
+
+												</select>
+											</div>
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">Value</label>
+												<input class="form-control" type="text" name="firstYearDpdValue"
+													th:value="${rule.firstYearDpdValue}" placeholder="Enter..." onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="90dpd" role="tabpanel">
+										<h6 class="mb-3">2nd Year DPD</h6>
+										<div class="row g-3">
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">STATUS</label>
+												<select class="form-select" id="input40" name="secondYearDpdStatus"
+													required>
+													<option selected disabled value="">Select</option>
+
+													<option th:selected="${rule.secondYearDpdStatus == 'ACTIVE'}" value="ACTIVE">ACTIVE</option>
+
+													<option th:selected="${rule.secondYearDpdStatus == 'INACTIVE'}" value="INACTIVE">IN-ACTIVE</option>
+
+
+												</select>
+											</div>
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">Value</label>
+												<input class="form-control" type="text" name="secondYearDpdValue"
+													th:value="${rule.secondYearDpdValue}" placeholder="Enter..." onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="minage" role="tabpanel">
+										<h6 class="mb-3">MIN AGE</h6>
+										<div class="row g-3">
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">STATUS</label>
+												<select class="form-select" id="input40" name="minAgeStatus" required>
+													<option selected disabled value="">Select</option>
+
+													<option th:selected="${rule.minAgeStatus == 'ACTIVE'}" value="ACTIVE">ACTIVE</option>
+
+													<option th:selected="${rule.minAgeStatus == 'INACTIVE'}" value="INACTIVE">IN-ACTIVE</option>
+
+
+
+												</select>
+											</div>
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">Value</label>
+												<input class="form-control" name="minAgeValue" type="text"
+													th:value="${rule.minAgeValue}" placeholder="Enter..." onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade " id="maxage" role="tabpanel">
+										<h6 class="mb-3">MAX AGE</h6>
+										<div class="row g-3">
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">STATUS</label>
+												<select class="form-select" id="input40" name="maxAgeStatus" required>
+													<option selected disabled value="">Select</option>
+
+													<option th:selected="${rule.maxAgeStatus == 'ACTIVE'}" value="ACTIVE">ACTIVE</option>
+
+													<option th:selected="${rule.maxAgeStatus == 'INACTIVE'}" value="INACTIVE">IN-ACTIVE</option>
+
+
+
+												</select>
+											</div>
+											<div class="col-12 col-lg-6">
+												<label class="mb-2">Value</label>
+												<input class="form-control" type="text" name="maxAgeValue"
+													th:value="${rule.maxAgeValue}" placeholder="Enter..." onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-sm-3 mt-3 col-form-label"></label>
+							<div class="col-sm-9">
+
+								<div class="d-md-flex d-grid align-items-center gap-3 mt-3">
+									<button type="submit" class="btn btn-grd btn-grd-primary px-5">Set All</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+
+
+		</div>
+	</main>
+</body>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</html>

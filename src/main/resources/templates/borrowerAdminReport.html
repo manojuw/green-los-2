@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">Report</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Search Borrower</li>
+							</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="card">
+						<div class="card-body p-4">
+							<!-- Message Section -->
+							<div th:if="${message}" class="alert alert-success" role="alert">
+								<p th:text="${message}"></p>
+							</div>
+
+							<form class="row g-3" th:action="@{/borrowerReport}" method="post">
+
+								<div class="col-md-6">
+									<label for="input35" class="col-sm-3 col-form-label">From Date</label>
+									<input type="date" class="form-control" id="input35" placeholder="Enter Permission"
+										name="fromDate" required>
+								</div>
+								<div class="col-md-6">
+									<label for="input35" class="col-sm-3 col-form-label">To Date</label>
+									<input type="date" class="form-control" id="input35" placeholder="Enter Permission"
+										name="toDate" required>
+								</div>
+								<div class="col-md-6">
+									<label for="input39" class="col-sm-3 col-form-label">Status</label>
+									<select class="form-select" id="input37" name="status">
+										<option selected value="">ALL</option>
+										<option value="LOAN_SUCCESSFUL">LOAN_SUCCESSFUL</option>
+										<option value="LOAN_FAILED">LOAN_FAILED</option>
+										<option value="LOAN_INITIATE">LOAN_INITIATE</option>
+									</select>
+								</div>
+
+								<div class="col-md-6">
+									<label for="input35" class="col-sm-3 col-form-label">Bussiness Name</label>
+									<select class="form-select" id="input40" name="uid">
+										<option selected value="">ALL</option>
+										<th:block th:each="nbfcList : ${bankUserDtos}">
+											<option th:value="${bankUserDtos.uid}" th:text="${bankUserDtos.businessName}">
+											</option>
+										</th:block>
+									</select>
+
+
+								</div>
+
+								<div class="row">
+									<label class="col-sm-3 col-form-label"></label>
+									<div class="d-md-flex d-grid align-items-center gap-3">
+										<button type="submit" class="btn btn-grd btn-grd-primary px-5">Search</button>
+
+										<!--										<button type="submit" formaction="/downloadAdminTransactions" formmethod="post"-->
+										<!--											class="btn btn-secondary px-5">-->
+										<!--											Download Report-->
+										<!--										</button>-->
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div><!-- end row -->
+
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<div id="example2_wrapper" class="dataTables_wrapper dt-bootstrap5">
+							<div class="row">
+								<div class="col-sm-12">
+									<table id="example2"
+										class="table table-striped table table-bordered mb-0 table-bordered dataTable"
+										role="grid" aria-describedby="example2_info">
+										<thead>
+											<tr role="row">
+											<tr role="row">
+												<th>Sr No</th>
+												<th>Borrower Name</th>
+												<th>Borrower Uid</th>
+												<th>Date</th>
+												<th>Status</th>
+												<th>Loan Amount</th>
+												<th>Loan Aggrement No</th>
+												<th>LSP Name</th>
+												<th>Scheme Id</th>
+												<th>Mobile</th>
+												<th>E-Sign Status</th>
+												<th>E-Nach Status</th>
+												<!--												<th>Message</th>-->
+												<th>Actions</th>
+
+
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Loop through permissions -->
+											<tr th:each="transaction , iter : ${transactions}" role="row">
+												<td th:text="${iter.index + 1}"></td>
+												<td th:text="${transaction.fullName}"></td>
+												<td th:text="${transaction.borrowerUid}"></td>
+												<td th:text="${transaction.createdOn}"></td>
+												<td th:text="${transaction.loanStatus}"></td>
+												<td th:text="${transaction.loanAmount}"></td>
+												<td th:text="${transaction.loanAggrement}"></td>
+												<td th:text="${transaction.lenderBrandName}"></td>
+												<td th:text="${transaction.schemeId}"></td>
+												<td th:text="${transaction.mobileNo}"></td>
+												<td th:text="${transaction.esignStatus}"></td>
+												<td th:text="${transaction.eNachStatus}"></td>
+												<td>
+													<button class="btn btn-grd btn-grd-primary px-5"
+														th:attr="onclick=|fetchBorrowerInfo('${transaction.borrowerUid}')|">
+														View More
+													</button>
+												</td>
+
+
+
+
+											</tr>
+
+
+											<div class="modal fade" id="ScrollableModal" style="display: none;"
+												aria-hidden="true">
+												<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+													<div class="modal-content">
+														<div class="modal-header border-bottom-0 bg-grd-primary py-2">
+															<h5 class="modal-title" id="modalTitle">Order Summary</h5>
+															<a href="javascript:;" class="primaery-menu-close"
+																data-bs-dismiss="modal">
+																<i class="material-icons-outlined">close</i>
+															</a>
+														</div>
+														<div class="modal-body" id="modalBody">
+															<!-- Dynamic content will be inserted here -->
+															<p>Loading...</p>
+														</div>
+
+													</div>
+												</div>
+											</div>
+
+										</tbody>
+										<tfoot>
+
+
+										</tfoot>
+									</table>
+
+
+								</div>
+							</div>
+
+
+							<ul class="pagination">
+								<li class="paginate_button page-item previous " id="example2_previous"
+									th:if="${currentPage > 0}">
+									<a th:href="@{ /borrowerReport(page=${currentPage - 1}, size=${10},
+										fromDate=${fromDate}, toDate=${toDate}, status=${status})}" aria-controls="example2" data-dt-idx="0"
+										tabindex="0" class="page-link">Prev</a>
+								</li>
+								<li class="paginate_button page-item active"><a href="#" aria-controls="example2"
+										data-dt-idx="1" tabindex="0" class="page-link"><span
+											th:text="'Page ' + (${currentPage + 1}) + ' of ' + ${totalPages}"></span></a>
+								</li>
+								<li class="paginate_button page-item next " id="example2_next"
+									th:if="${currentPage < totalPages - 1}"><a
+										th:href="@{/borrowerReport(page=${currentPage + 1}, size=${10}, fromDate=${fromDate}, toDate=${toDate}, status=${status})}"
+										aria-controls="example2" data-dt-idx="2" tabindex="0" class="page-link">Next</a>
+								</li>
+							</ul>
+							<!-- Pagination and other elements can remain the same -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+
+<script>
+	function fetchBorrowerInfo(borrowerUid) {
+		fetch(`/getMoreInfo?borrowerUid=${borrowerUid}`)
+			.then(response => response.json()) // Assume the server returns JSON data
+			.then(data => {
+				// Open the modal programmatically
+				const modal = new bootstrap.Modal(document.getElementById('ScrollableModal'));
+
+				// Check if data.borrower is not null
+				if (data.borrower) {
+					document.getElementById('modalTitle').innerText = data.borrower.fullName || 'Borrower Details';
+					document.getElementById('modalBody').innerHTML = `
+						<p><strong>Borrower UID:</strong> ${data.borrower.borrowerUid || 'N/A'}</p>
+						<p><strong>Lender UID:</strong> ${data.borrower.lenderUid || 'N/A'}</p>
+						<p><strong>Lender Name:</strong> ${data.borrower.lenderName || 'N/A'}</p>
+						<p><strong>Lender Brand Name:</strong> ${data.borrower.lenderBrandName || 'N/A'}</p>
+						<p><strong>Lender Authority Email:</strong> ${data.borrower.lenderAuthorityEmail || 'N/A'}</p>
+						<p><strong>Lender Authority Name:</strong> ${data.borrower.lenderAuthorityName || 'N/A'}</p>
+						<p><strong>Lender Authority Mobile No:</strong> ${data.borrower.LenderAuthorityMobileNo || 'N/A'}</p>
+						<p><strong>Scheme ID:</strong> ${data.borrower.schemeId || 'N/A'}</p>
+						<p><strong>Full Name:</strong> ${data.borrower.fullName || 'N/A'}</p>
+						<p><strong>Gender:</strong> ${data.borrower.gender || 'N/A'}</p>
+						<p><strong>EMI Frequency:</strong> ${data.borrower.emiFrequency || 'N/A'}</p>
+						<p><strong>Loan Amount:</strong> ${data.borrower.loanAmount || 'N/A'}</p>
+						<p><strong>EMI Rate:</strong> ${data.borrower.emiRate || 'N/A'}</p>
+						<p><strong>EMI Time:</strong> ${data.borrower.emiTime || 'N/A'}</p>
+						<p><strong>EMI Amount:</strong> ${data.borrower.emiAmount || 'N/A'}</p>
+						<p><strong>Section Amount:</strong> ${data.borrower.sectionAmount || 'N/A'}</p>
+						<p><strong>Product ID:</strong> ${data.borrower.productId || 'N/A'}</p>
+						<p><strong>Loan Type:</strong> ${data.borrower.loanType || 'N/A'}</p>
+						<p><strong>Employment Type:</strong> ${data.borrower.employmentType || 'N/A'}</p>
+						<p><strong>Email ID:</strong> ${data.borrower.emailId || 'N/A'}</p>
+						<p><strong>Mobile No:</strong> ${data.borrower.mobileNo || 'N/A'}</p>
+						<p><strong>Loan Agreement:</strong> ${data.borrower.loanAggrement || 'N/A'}</p>
+						<p><strong>Purpose of Loan:</strong> ${data.borrower.purposeOfLoan || 'N/A'}</p>
+						<p><strong>Nature of Loan:</strong> ${data.borrower.natureOfLoan || 'N/A'}</p>
+						<p><strong>Total Processing Fee:</strong> ${data.borrower.totalProcessingFee || 'N/A'}</p>
+						<p><strong>Total Loan Amount:</strong> ${data.borrower.totalLoanAmount || 'N/A'}</p>
+						<p><strong>Total Interest:</strong> ${data.borrower.totalInterest || 'N/A'}</p>
+						<p><strong>Response Code:</strong> ${data.borrower.responseCode || 'N/A'}</p>
+						<p><strong>Response Message:</strong> ${data.borrower.responseMessage || 'N/A'}</p>
+						<p><strong>Fees:</strong> ${data.borrower.fees || 'N/A'}</p>
+						<p><strong>EMI Date:</strong> ${data.borrower.emiDate || 'N/A'}</p>
+						<p><strong>Date of Birth:</strong> ${data.borrower.dateOfBirth || 'N/A'}</p>
+						<p><strong>Total Salary:</strong> ${data.borrower.totalSalary || 'N/A'}</p>
+						<p><strong>Customer ID:</strong> ${data.borrower.customerId || 'N/A'}</p>
+						<p><strong>Finance ID:</strong> ${data.borrower.financeId || 'N/A'}</p>
+						<p><strong>Lead Source ID:</strong> ${data.borrower.leadSourceId || 'N/A'}</p>
+						<p><strong>Product Type ID:</strong> ${data.borrower.productTypeId || 'N/A'}</p>
+						<p><strong>Relationship Type:</strong> ${data.borrower.relationshipType || 'N/A'}</p>
+						<p><strong>Related Person Name:</strong> ${data.borrower.relatedPersonName || 'N/A'}</p>
+						<p><strong>Marital Status:</strong> ${data.borrower.maritalStatus || 'N/A'}</p>
+						<p><strong>Next Step:</strong> ${data.borrower.nextStep || 'N/A'}</p>
+						<p><strong>UDF1:</strong> ${data.borrower.udf1 || 'N/A'}</p>
+						<p><strong>UDF2:</strong> ${data.borrower.udf2 || 'N/A'}</p>
+						<p><strong>UDF3:</strong> ${data.borrower.udf3 || 'N/A'}</p>
+						<p><strong>UDF4:</strong> ${data.borrower.udf4 || 'N/A'}</p>
+						<p><strong>UDF5:</strong> ${data.borrower.udf5 || 'N/A'}</p>
+						<p><strong>Secondary Address Line 1:</strong> ${data.borrower.secondaryAddressLine1 || 'N/A'}</p>
+						<p><strong>Secondary Area:</strong> ${data.borrower.secondaryArea || 'N/A'}</p>
+						<p><strong>Secondary City:</strong> ${data.borrower.secondaryCity || 'N/A'}</p>
+						<p><strong>Secondary State:</strong> ${data.borrower.secondaryState || 'N/A'}</p>
+						<p><strong>Secondary Landmark:</strong> ${data.borrower.secondaryLandmark || 'N/A'}</p>
+						<p><strong>Secondary Pin Code:</strong> ${data.borrower.secondaryPinCode || 'N/A'}</p>
+						<p><strong>Consent for Loan:</strong> ${data.borrower.consentForLoan || 'N/A'}</p>
+						<p><strong>Webhook URL:</strong> ${data.borrower.webhookUrl || 'N/A'}</p>
+						<p><strong>Loan Status:</strong> ${data.borrower.loanStatus || 'N/A'}</p>
+					`;
+					modal.show();
+				} else {
+					// If borrower data is not available, show message in HTML
+					document.getElementById('modalTitle').innerText = 'No Borrower Information Available';
+					document.getElementById('modalBody').innerHTML = `
+						<p>We couldn't find any information for this borrower at the moment.</p>
+					`;
+					// Optionally, you can also trigger the modal to show this message
+					modal.show();
+				}
+
+				// Check if data.borrowerAadhaar exists and handle it
+				if (data.borrowerAadhaar) {
+					document.getElementById('modalBody').innerHTML += `
+						<p><strong>Aadhar Number:</strong> ${data.borrowerAadhaar.aadharNumber || 'N/A'}</p>
+                        <p><strong>Name in Aadhar Card:</strong> ${data.borrowerAadhaar.nameInAadharCard || 'N/A'}</p>
+                        <p><strong>Date of Birth:</strong> ${data.borrowerAadhaar.dateofBirth || 'N/A'}</p>
+                        <p><strong>Country in Aadhar:</strong> ${data.borrowerAadhaar.countryInAadhar || 'N/A'}</p>
+                        <p><strong>State in Aadhar:</strong> ${data.borrowerAadhaar.stateInAadhar || 'N/A'}</p>
+                        <p><strong>District in Aadhar:</strong> ${data.borrowerAadhaar.distInAadhar || 'N/A'}</p>
+                        <p><strong>Subdistrict in Aadhar:</strong> ${data.borrowerAadhaar.subdistInAadhar || 'N/A'}</p>
+                        <p><strong>Post Office in Aadhar:</strong> ${data.borrowerAadhaar.poInAadhar || 'N/A'}</p>
+                        <p><strong>Village/Town in Aadhar:</strong> ${data.borrowerAadhaar.vtcInAadhar || 'N/A'}</p>
+                        <p><strong>Location in Aadhar:</strong> ${data.borrowerAadhaar.locInAadhar || 'N/A'}</p>
+                        <p><strong>Street in Aadhar:</strong> ${data.borrowerAadhaar.streetInAadhar || 'N/A'}</p>
+                        <p><strong>House in Aadhar:</strong> ${data.borrowerAadhaar.houseInAadhar || 'N/A'}</p>
+                        <p><strong>Landmark in Aadhar:</strong> ${data.borrowerAadhaar.landmarkInAadhar || 'N/A'}</p>
+                        <p><strong>Zip Code in Aadhar:</strong> ${data.borrowerAadhaar.zipInAadhar || 'N/A'}</p>
+                        <p><strong>Care of in Aadhar:</strong> ${data.borrowerAadhaar.careOfInAadhar || 'N/A'}</p>
+                        <p><strong>Gender in Aadhar:</strong> ${data.borrowerAadhaar.genderInAadhar || 'N/A'}</p>
+                        <p><strong>Aadhar Response:</strong> ${data.borrowerAadhaar.aadharResponse || 'N/A'}</p>
+					`;
+					modal.show();
+				}
+
+				if (data.borrowerPan) {
+					document.getElementById('modalBody').innerHTML += `
+						<p><strong>Pan Number:</strong> ${data.borrowerPan.panNumber || 'N/A'}</p>
+                        <p><strong>Name in Pan Card:</strong> ${data.borrowerPan.nameInPanNumber || 'N/A'}</p>
+                        <p><strong>Pan Card Flag:</strong> ${data.borrowerPan.panCardFlag || 'N/A'}</p>
+                        <p><strong>Pan Response:</strong> ${data.borrowerPan.panResponse || 'N/A'}</p>
+					`;
+					modal.show();
+				}
+
+
+				if (data.borrowerCibil) {
+					document.getElementById('modalBody').innerHTML += `
+						<p><strong>DPD:</strong> ${data.borrowerCibil.dpd || 'N/A'}</p>
+<p><strong>Cibil Score:</strong> ${data.borrowerCibil.cibilScore || 'N/A'}</p>
+<p><strong>Active Credit:</strong> ${data.borrowerCibil.activeCredit || 'N/A'}</p>
+<p><strong>Suit File:</strong> ${data.borrowerCibil.suitFile || 'N/A'}</p>
+<p><strong>Settled Loan:</strong> ${data.borrowerCibil.settledLoan || 'N/A'}</p>
+<p><strong>Write-Off:</strong> ${data.borrowerCibil.writeOff || 'N/A'}</p>
+<p><strong>First Year DPD:</strong> ${data.borrowerCibil.firstYearDPD || 'N/A'}</p>
+<p><strong>Second Year DPD:</strong> ${data.borrowerCibil.secondYearDPD || 'N/A'}</p>
+<p><strong>NTC:</strong> ${data.borrowerCibil.ntc ? 'Yes' : 'No'}</p>
+<p><strong>CAIS Account Details:</strong> ${data.borrowerCibil.caisAccountDetails || 'N/A'}</p>
+<p><strong>Cibil Response:</strong> ${data.borrowerCibil.cibilResponse || 'N/A'}</p>
+
+					`;
+					modal.show();
+				}
+				if (data.borrowerBank) {
+					document.getElementById('modalBody').innerHTML += `
+						<p><strong>Bank Account Number:</strong> ${data.borrowerBank.bankAccountNo || 'N/A'}</p>
+<p><strong>Account Type:</strong> ${data.borrowerBank.accountType || 'N/A'}</p>
+<p><strong>IFSC Code:</strong> ${data.borrowerBank.ifscCode || 'N/A'}</p>
+<p><strong>Name at Bank:</strong> ${data.borrowerBank.nameAtBank || 'N/A'}</p>
+<p><strong>Bank Branch Name:</strong> ${data.borrowerBank.bankBranchName || 'N/A'}</p>
+<p><strong>Bank Response:</strong> ${data.borrowerBank.bankResponse || 'N/A'}</p>
+
+					`;
+					modal.show();
+				}
+				
+				if (data.borrowerDoc) {
+					document.getElementById('modalBody').innerHTML += `
+						<p><strong>eSign Request ID:</strong> ${data.borrowerDoc.eSignReqId || 'N/A'}</p>
+<p><strong>eSign Document ID:</strong> ${data.borrowerDoc.eSignDocId || 'N/A'}</p>
+<p><strong>eSign Redirect URL:</strong> ${data.borrowerDoc.eSignRedirectUrl || 'N/A'}</p>
+<p><strong>eSign Status:</strong> ${data.borrowerDoc.eSignStatus ? 'Completed' : 'Pending'}</p>
+
+<p><strong>User Image:</strong> ${data.borrowerDoc.userImage || 'N/A'}</p>
+<p><strong>PAN Image:</strong> ${data.borrowerDoc.panImage || 'N/A'}</p>
+<p><strong>Aadhar Image:</strong> ${data.borrowerDoc.aadharImage || 'N/A'}</p>
+<p><strong>Bank Statement PDF:</strong> ${data.borrowerDoc.bankStatementPdf || 'N/A'}</p>
+
+
+					`;
+					modal.show();
+				}
+				
+				
+
+
+			})
+			.catch(error => {
+				console.error('Error fetching borrower info:', error);
+				alert('Failed to fetch data. Please try again later.');
+			});
+	}
+</script>
+
+
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			paging: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</html>

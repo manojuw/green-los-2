@@ -1,0 +1,28 @@
+image: maven:3.8.7-eclipse-temurin-17
+
+pipelines:
+  default:
+    - step:
+        name: Build and Test
+        caches:
+          - maven
+        script:
+          - mvn -B verify --file pom.xml
+        after-script:
+          # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
+          - pipe: atlassian/checkstyle-report:0.3.0
+
+    - step:
+        name: Security Scan
+        script:
+          # Run a security scan for sensitive data.
+          - pipe: atlassian/git-secrets-scan:0.5.1
+
+  branches:
+    payout:  # Change 'master' to your default branch if needed
+      - step:
+          name: Deploy to Production
+          deployment: production  # This indicates it's a deployment step
+          script:
+            - echo "Deploying to production environment"
+            # Add your deployment commands here

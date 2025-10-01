@@ -1,0 +1,40 @@
+<configuration>
+
+	<!-- Console Appender (Optional) -->
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg [%X{correlationId}]%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- File Appender for /opt/logs/app.log -->
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- Log file location -->
+		<file>/opt/logs/greenlos.log</file>
+
+		<!-- Define rolling policy -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- Daily rolling, with backups saved in /opt/backup/{date}/ -->
+			<fileNamePattern>/opt/backup/%d{yyyy-MM-dd}/greenlos-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+
+			<!-- Max history of log files -->
+			<maxHistory>6000</maxHistory>
+		</rollingPolicy>
+
+		<!-- Log format -->
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%X{correlationId}] [%thread] %-5level %logger{36} - %msg %n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Root Logger -->
+	<root level="info">
+		<appender-ref ref="STDOUT" /> <!-- Optional: for console logs -->
+		<appender-ref ref="FILE" />    <!-- File-based logging -->
+	</root>
+
+</configuration>

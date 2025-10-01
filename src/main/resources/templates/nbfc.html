@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+	<link href="assets/plugins/fancy-file-uploader/fancy_fileupload.css" rel="stylesheet">
+	<link href="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css" rel="stylesheet">
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">Organisation</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add Organisation</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<!--start stepper one-->
+
+			<h6 class="text-uppercase">On-Boarding Organisation</h6>
+			<hr>
+			<div id="stepper1" class="bs-stepper">
+				<div class="card">
+
+					<!-- Message Section -->
+					<div th:if="${message}" class="alert alert-success" role="alert">
+						<p th:text="${message}"></p>
+					</div>
+
+					<div class="card-header">
+						<div class="d-lg-flex flex-lg-row align-items-lg-center justify-content-lg-between"
+							role="tablist">
+							<div class="step" data-target="#test-l-1">
+								<div class="step-trigger" role="tab" id="stepper1trigger1" aria-controls="test-l-1">
+									<div class="bs-stepper-circle">1</div>
+									<div class="">
+										<h5 class="mb-0 steper-title">Organisation Details</h5>
+										<p class="mb-0 steper-sub-title">Enter Organisation Details</p>
+									</div>
+								</div>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-l-2">
+								<div class="step-trigger" role="tab" id="stepper1trigger2" aria-controls="test-l-2">
+									<div class="bs-stepper-circle">2</div>
+									<div class="">
+										<h5 class="mb-0 steper-title">Account Details</h5>
+										<p class="mb-0 steper-sub-title">Setup Account Details</p>
+									</div>
+								</div>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-l-3">
+								<div class="step-trigger" role="tab" id="stepper1trigger3" aria-controls="test-l-3">
+									<div class="bs-stepper-circle">3</div>
+									<div class="">
+										<h5 class="mb-0 steper-title">Signatory Details</h5>
+										<p class="mb-0 steper-sub-title">Setup Signatory Details</p>
+									</div>
+								</div>
+							</div>
+							<div class="bs-stepper-line"></div>
+							<div class="step" data-target="#test-l-4">
+								<div class="step-trigger" role="tab" id="stepper1trigger4" aria-controls="test-l-4">
+									<div class="bs-stepper-circle">4</div>
+									<div class="">
+										<h5 class="mb-0 steper-title">Profile Details</h5>
+										<p class="mb-0 steper-sub-title">Setup Profile Details</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="bs-stepper-content">
+							<form method="POST" th:action="@{/submit-organisation}" enctype="multipart/form-data">
+								<div id="test-l-1" role="tabpanel" class="bs-stepper-pane"
+									aria-labelledby="stepper1trigger1">
+									<h5 class="mb-1">Your Organisation Details</h5>
+
+									<div class="row g-3">
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Brand Name</label>
+											<input type="text" name="brandName"  class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Co-lender Name</label>
+											<input type="text" name="coLenderName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">NBFC Name</label>
+											<input type="text" name="nbfcName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Organisation E-mail Address</label>
+											<input type="text" name="organisationEmail" autocomplete="off"
+												class="form-control" placeholder="Enter ...." id="organisationEmail" required>
+
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Website</label>
+											<input type="text" name="website" class="form-control"
+												placeholder="Enter ...." >
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Address</label>
+											<input type="text" name="address" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">City</label>
+											<input type="text" name="city" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">State</label>
+											<input type="text" name="state" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Country</label>
+											<input type="text" name="country" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Postal Code</label>
+											<input type="text" name="postalCode" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Colender Redressal Officer Name</label>
+											<input type="text" name="colenderRedressalOfficerName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Colender Redressal Officer Email</label>
+											<input type="text" name="colenderRedressalOfficerEmail" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Colender Redressal Officer Phone</label>
+											<input type="text" name="colenderRedressalOfficerPhone" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">GST Number</label>
+											<input type="text" name="gstNumber" class="form-control"
+												placeholder="Enter ....">
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">PAN No.</label>
+											<input type="text" name="panNumber" class="form-control"
+												placeholder="Enter ....">
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">CIN No.</label>
+											<input type="text" name="cinNumber" class="form-control"
+												placeholder="Enter ....">
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">NBFC Registration No.</label>
+											<input type="text" name="nbfcRegistrationNumber" class="form-control"
+												placeholder="Enter ....">
+										</div>
+
+
+
+										<div class="col-12">
+											<div class="d-flex align-items-center gap-3">
+												<button type="button" class="btn btn-grd-primary px-4"
+													onclick="stepper1.next()">Next<i
+														class='bx bx-right-arrow-alt ms-2'></i></button>
+											</div>
+										</div>
+									</div><!---end row-->
+
+								</div>
+
+								<div id="test-l-2" role="tabpanel" class="bs-stepper-pane"
+									aria-labelledby="stepper1trigger2">
+
+									<h5 class="mb-1">Account Details</h5>
+
+									<div class="row g-3">
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Bank Name</label>
+											<input type="text" name="bankName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Account No.</label>
+											<input type="text" name="accountNumber" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Bank Branch</label>
+											<input type="text" name="bankBranch" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">IFSC Code</label>
+											<input type="text" name="ifscCode" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">MICR</label>
+											<input type="text" name="micr" class="form-control"
+												placeholder="Enter ...." >
+										</div>
+										<div class="col-12">
+											<div class="d-flex align-items-center gap-3">
+												<button type="button" class="btn btn-grd-info px-4"
+													onclick="stepper1.previous()"><i
+														class='bx bx-left-arrow-alt me-2'></i>Previous</button>
+												<button type="button" class="btn btn-grd-primary px-4"
+													onclick="stepper1.next()">Next<i
+														class='bx bx-right-arrow-alt ms-2'></i></button>
+											</div>
+										</div>
+									</div><!---end row-->
+
+								</div>
+
+								<div id="test-l-3" role="tabpanel" class="bs-stepper-pane"
+									aria-labelledby="stepper1trigger3">
+									<h5 class="mb-1">Signatory Details</h5>
+
+									<div class="row g-3">
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Authorised Person Name</label>
+											<input type="text" name="authorisedPersonName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Authorised Person Email</label>
+											<input type="text" name="authorisedPersonEmail" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Authorised Person Mobile</label>
+											<input type="text" name="authorisedPersonMobile" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12">
+											<div class="d-flex align-items-center gap-3">
+												<button type="button" class="btn btn-grd-info px-4"
+													onclick="stepper1.previous()"><i
+														class='bx bx-left-arrow-alt me-2'></i>Previous</button>
+												<button type="button" class="btn btn-grd-primary px-4"
+													onclick="stepper1.next()">Next<i
+														class='bx bx-right-arrow-alt ms-2'></i></button>
+											</div>
+										</div>
+									</div><!---end row-->
+
+								</div>
+
+								<div id="test-l-4" role="tabpanel" class="bs-stepper-pane"
+									aria-labelledby="stepper1trigger4">
+									<h5 class="mb-1">Profile Details</h5>
+
+									<div class="row g-3">
+										<div class="col-12 col-lg-6">
+											<label class="form-label">User Name</label>
+											<input type="text" name="userName" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">Password</label>
+											<input type="password" name="password" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<label class="form-label">SPOC</label>
+											<input type="text" name="spoC" class="form-control"
+												placeholder="Enter ...." required>
+										</div>
+										<div class="col-12 col-lg-6">
+											<div class="mb-3">
+												<label for="organisationLogo" class="form-label">Organisation
+													Logo URL</label>
+												<input class="form-control" name="organisationLogoPath" type="text"
+													id="organisationLogo" required>
+											</div>
+										</div>
+										<div class="col-12 col-lg-6">
+											<div class="mb-3">
+												<label for="authorisedSignatory" class="form-label">Authorised
+													Signatory URL</label>
+												<input class="form-control" name="authorisedSignatoryPath" type="text"
+													id="authorisedSignatory" required>
+											</div>
+										</div>
+										<div class="col-12 col-lg-6">
+											<div class="mb-3">
+												<label for="organisationDocument" class="form-label">Organisation
+													Document URL</label>
+												<input class="form-control" name="organisationDocumentPath" type="text"
+													id="organisationDocument" required>
+											</div>
+										</div>
+
+
+										<div class="col-12">
+											<div class="d-flex align-items-center gap-3">
+												<button type="button" class="btn btn-grd-info px-4"
+													onclick="stepper1.previous()"><i
+														class='bx bx-left-arrow-alt me-2'></i>Previous</button>
+												<button type="submit" class="btn btn-grd btn-grd-primary px-5">Save<i
+														class='bx bx-right-arrow-alt ms-2'></i></button>
+											</div>
+										</div>
+									</div><!---end row-->
+
+								</div>
+							</form>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<!--end stepper one-->
+
+
+		</div>
+	</main>
+</body>
+
+<!--start switcher-->
+
+<!--bootstrap js-->
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+<script src="assets/plugins/bs-stepper/js/main.js"></script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/fancy-file-uploader/jquery.ui.widget.js"></script>
+<script src="assets/plugins/fancy-file-uploader/jquery.fileupload.js"></script>
+<script src="assets/plugins/fancy-file-uploader/jquery.iframe-transport.js"></script>
+<script src="assets/plugins/fancy-file-uploader/jquery.fancy-fileupload.js"></script>
+<script src="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+
+</html>

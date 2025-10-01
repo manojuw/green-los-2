@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+
+	<head th:replace="~{fragments/header}"></head>
+
+	<head th:replace="~{fragments/menu}"></head>
+
+	<main class="main-wrapper">
+		<div class="main-content">
+			<!--breadcrumb-->
+			<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+				<div class="breadcrumb-title pe-3">User</div>
+				<div class="ps-3">
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb mb-0 p-0">
+							<li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+							<li class="breadcrumb-item active" aria-current="page">Add User</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<!--end breadcrumb-->
+
+			<div class="row">
+				<div class="col-12 col-lg-12">
+					<div class="card">
+						<div class="card-body p-4">
+							<!-- Message Section -->
+							<div th:if="${message}" class="alert alert-success" role="alert">
+								<p th:text="${message}"></p>
+							</div>
+
+							<form class="row g-3" th:action="@{/addUser}" method="post">
+								<h5 class="mb-4">Add User Form</h5>
+
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">User Name</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="input35"
+											placeholder="Enter Username" name="userName" required minlength="3"
+											maxlength="20">
+									</div>
+								</div>
+
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">Password</label>
+									<div class="col-sm-9">
+										<input type="password" class="form-control" id="input36"
+											placeholder="Enter Password" name="password" required minlength="8"
+											autocomplete="off">
+									</div>
+								</div>
+
+								<div class="row mb-3">
+									<label for="input39" class="col-sm-3 col-form-label">Select Role</label>
+									<div class="col-sm-9">
+										<select class="form-select" id="input40" name="role" required>
+											<option selected disabled value="">Select</option>
+											<th:block th:each="role : ${roles}">
+												<option th:value="${role.name}" th:text="${role.name}">
+												</option>
+											</th:block>
+										</select>
+									</div>
+								</div>
+
+<!--								<div class="row mb-3">-->
+<!--									<label for="input35" class="col-sm-3 col-form-label">RESELLER ID</label>-->
+<!--									<div class="col-sm-9">-->
+<!--										<input type="text" class="form-control" id="input38"-->
+<!--											placeholder="Enter Reseller Id" name="resellerId" required minlength="20"-->
+<!--											maxlength="20" autocomplete="off">-->
+<!--									</div>-->
+<!--								</div>-->
+
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">Business Name</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="input39"
+											placeholder="Enter Business Name" name="businessName" required minlength="3"
+											maxlength="50">
+									</div>
+								</div>
+
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">Email Id</label>
+									<div class="col-sm-9">
+										<input type="email" class="form-control" id="input40" placeholder="Enter Email"
+											name="emailId" required>
+									</div>
+								</div>
+
+								<div class="row mb-3">
+									<label for="input35" class="col-sm-3 col-form-label">Mobile No.</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" id="input41"
+											placeholder="Enter Mobile No" name="mobile" required pattern="[0-9]{10}">
+									</div>
+								</div>
+
+								<div class="row">
+									<label class="col-sm-3 col-form-label"></label>
+									<div class="col-sm-9">
+										<div class="d-md-flex d-grid align-items-center gap-3">
+											<button type="submit" class="btn btn-grd btn-grd-primary px-5">Save</button>
+										</div>
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+				
+				
+			</div><!-- end row -->
+
+
+		</div>
+	</main>
+</body>
+
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<!--plugins-->
+<script src="assets/js/jquery.min.js"></script>
+<!--plugins-->
+<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
+<script src="assets/plugins/metismenu/metisMenu.min.js"></script>
+<script src="assets/plugins/datatable/js/jquery.dataTables.min.js"></script>
+<script src="assets/plugins/datatable/js/dataTables.bootstrap5.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('#example').DataTable();
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		var table = $('#example2').DataTable({
+			lengthChange: false,
+			buttons: ['copy', 'excel', 'pdf', 'print']
+		});
+
+		table.buttons().container()
+			.appendTo('#example2_wrapper .col-md-6:eq(0)');
+	});
+</script>
+<script src="assets/plugins/simplebar/js/simplebar.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+</html>
