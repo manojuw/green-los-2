@@ -37,4 +37,6 @@ public interface ApiService {
 
 	void checkAadharStatus(BorrowerAadhaar borrowerAadhaar);
 
+	String esignV2forDirectSign(Borrower borrowerObj, String base64Pdf);
+
 }

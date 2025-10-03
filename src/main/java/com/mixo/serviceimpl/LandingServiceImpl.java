@@ -110,6 +110,12 @@ public class LandingServiceImpl implements LandingService {
 	@Value("${docUploadUrl}")
 	private String docUploadUrl;
 
+	@Value("${legal_download}")
+	private String legal_download;
+
+	@Value("${legal_token}")
+	private String legal_token;
+
 	@Autowired
 	UserVerificationStatusRepository userVerificationStatusRepository;
 
@@ -1368,20 +1374,44 @@ public class LandingServiceImpl implements LandingService {
 				// Convert file to Base64
 				byte[] fileBytes = file.getBytes();
 				String base64Image = Base64.getEncoder().encodeToString(fileBytes);
+				String esign = apiService.esignV2forDirectSign(borrowerDetails, base64Image);
+				JSONObject root = new JSONObject(esign);
+
+				JSONObject data = root.getJSONObject("data");
+
+				// Data-level fields
+				String documentId = data.getString("documentId");
+
+				JSONArray invitations = data.getJSONArray("invitations");
+
+				// Since only one invitation exists
+				JSONObject invite = invitations.getJSONObject(0);
+				String signUrl = invite.getString("signUrl");
+
+				String url = legal_download + documentId;
+
+				HttpClient client = HttpClient.newHttpClient();
+
+				HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("accept", "application/json")
+						.header("content-type", "application/json").header("X-Auth-Token", legal_token).GET().build();
+
+				HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+				String base64Pdf = Base64.getEncoder().encodeToString(response.body());
 
 				if (borrowerDoc == null) {
 					borrowerDoc = new BorrowerDoc();
 					borrowerDoc.setBorrowerUid(borrowerId);
-					String jsonBody = awsS3Service.uploadJsonToS3(borrowerId + "esigned.json", base64Image);
+					String jsonBody = awsS3Service.uploadJsonToS3(borrowerId + "esigned.json", base64Pdf);
 					borrowerDoc.setESignReqId(jsonBody);
 					borrowerDocRepository.save(borrowerDoc);
 				}
 				borrowerDoc.setBorrowerUid(borrowerId);
-				String jsonBody = awsS3Service.uploadJsonToS3(borrowerId + "esigned.json", base64Image);
+				String jsonBody = awsS3Service.uploadJsonToS3(borrowerId + "esigned.json", base64Pdf);
 				borrowerDoc.setESignReqId(jsonBody);
 				borrowerDocRepository.save(borrowerDoc);
 
-				JSONObject documentUpload = createJsonForDocx(borrowerDetails.getFinanceId(), base64Image, "kfs");
+				JSONObject documentUpload = createJsonForDocx(borrowerDetails.getFinanceId(), base64Pdf, "kfs");
 				String respom = callApiForDocUploadCreation(documentUpload);
 				callApiForDocUploadWithHmac(respom, documentUpload);
 
