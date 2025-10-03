@@ -406,6 +406,49 @@ public class ApiServiceImpl implements ApiService {
 	}
 
 	@Override
+	public String esignV2forDirectSign(Borrower borrowerObj, String base64Pdf) {
+		String url = legal_upload_url;
+
+		// 1. File Object
+		JSONObject fileObj = new JSONObject().put("name", borrowerObj.getLoanAggrement() + ".pdf").put("file",
+				base64Pdf);
+
+		// 2. Invitee 1 (AADHAAR)
+		JSONObject aadhaarConfig = new JSONObject().put("authTypes", new JSONArray().put("OTP").put("BIO").put("IRIS"));
+
+		JSONObject aadhaarSignature = new JSONObject().put("type", "AADHAAR").put("config", aadhaarConfig);
+
+		// 3. Invitee 2 (AUTOMATED_SIGN)
+		JSONObject automatedConfig = new JSONObject().put("id", sign_id).put("passkey", passKey);
+
+		JSONObject automatedSignature = new JSONObject().put("type", "AUTOMATED_SIGN").put("config", automatedConfig);
+
+		JSONObject invitee2 = new JSONObject().put("name", signerName).put("email", signerEmail).put("signatures",
+				new JSONArray().put(automatedSignature));
+
+		JSONArray inviteesArray = new JSONArray().put(invitee2);
+
+		// 4. eSign Priority
+		JSONObject eSignPriorityConfigObj = new JSONObject().put("signatureType", "AADHAAR").put("eSignSubType", "OTP")
+				.put("retryAttempts", 2).put("order", 1);
+
+		JSONObject eSignPriorityObj = new JSONObject().put("enableEsignPriority", true).put("eSignPriorityConfig",
+				new JSONArray().put(eSignPriorityConfigObj));
+
+		// 5. Root JSON Object
+		JSONObject root = new JSONObject().put("file", fileObj).put("invitees", inviteesArray)
+				.put("eSignPriority", new JSONArray().put(eSignPriorityObj))
+				.put("message", "Please eSign this document").put("expiryDays", 10).put("requestSignOrder", true);
+
+		// 6. Send Request
+		Mono<String> response = webClient.post().uri(url).header("X-Auth-Token", legal_token)
+				.header("Content-Type", "application/json").bodyValue(root.toString()).retrieve()
+				.bodyToMono(String.class).doOnNext(jsonResponse -> log.info("Esign Response JSON: {}", jsonResponse));
+
+		return response.block();
+	}
+
+	@Override
 	public String verifyPANRequest(PanVerificationRequest request) {
 		String url = "https://apis2.mufingreenfinance.com/pan";
 
