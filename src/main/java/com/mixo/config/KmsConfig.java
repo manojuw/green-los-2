@@ -15,7 +15,7 @@ public class KmsConfig {
 	 KmsClient kmsClient() {
 		return KmsClient.builder().region(Region.AP_SOUTH_1) // Replace with your region
 				.credentialsProvider(StaticCredentialsProvider.create(
-						AwsBasicCredentials.create("dadsa", "dadadas")))
+						AwsBasicCredentials.create("<>", "<>")))
 				.build();
 	}
 
