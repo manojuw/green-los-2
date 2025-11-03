@@ -15,7 +15,6 @@ public class AwsS3Config {
 	S3Client s3Client() {
 		return S3Client.builder().region(Region.AP_SOUTH_1) // Replace with your region
 				.credentialsProvider(StaticCredentialsProvider.create(
-//						AwsBasicCredentials.create("AKIA45Y2R6GVYHXDBJQF", "6Ai2VEHpabuQ/eMd6sA/rVNWRUhBnaTl2IWSOGTc")))
 				AwsBasicCredentials.create("AKIA45Y2R6GVQGMODEEB", "wv5bzVFmC9ne61oFQC9MiYXq9hV5GUxP7XUZzTjl")))
 				.build();
 	}
